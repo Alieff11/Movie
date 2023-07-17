@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Watchlist</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <h1>Watchlist</h1>
+  <div id="watchlistContainer"></div>
+  <a href="index.html">back</a>
+  <script>
+    const watchlistContainer = document.getElementById('watchlistContainer');
+
+    // Retrieve watchlist from local storage if available
+    let watchlist = [];
+    if (localStorage.getItem('watchlist')) {
+      watchlist = JSON.parse(localStorage.getItem('watchlist'));
+    }
+
+    // Render watchlist
+    watchlist.forEach(movie => {
+      const movieElement = createMovieElement(movie);
+      watchlistContainer.appendChild(movieElement);
+    });
+
+    function createMovieElement(movie) {
+      const movieElement = document.createElement('div');
+      movieElement.className = 'movie';
+      movieElement.setAttribute('data-imdbid', movie.imdbID);
+
+      movieElement.innerHTML = `
+        <h3>${movie.Title}</h3>
+        <p>Year: ${movie.Year}</p>
+        <div class="button-container">
+          <button onclick="removeFromWatchlist(this)">Remove</button>
+        </div>
+      `;
+
+      return movieElement;
+    }
+
+    function removeFromWatchlist(button) {
+      const movieElement = button.parentNode.parentNode;
+      const movieID = movieElement.getAttribute('data-imdbid');
+
+      // Remove the movie from the watchlist
+      watchlist = watchlist.filter(movie => movie.imdbID !== movieID);
+      localStorage.setItem('watchlist', JSON.stringify(watchlist));
+
+      // Remove the movie element from the DOM
+      watchlistContainer.removeChild(movieElement);
+    }
+  </script>
+</body>
+</html>
